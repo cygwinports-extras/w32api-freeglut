@@ -1,0 +1,31 @@
+NAME="w32api-freeglut"
+VERSION=2.8.0
+RELEASE=1
+CATEGORY="Devel"
+SUMMARY="Open Source GLUT implementation for Cygwin/WGL"
+DESCRIPTION="freeglut is a completely OpenSourced alternative to the OpenGL Utility
+Toolkit (GLUT) library. GLUT (and hence freeglut) allows the user to create and
+manage windows containing OpenGL contexts on a wide range of platforms and also
+read the mouse, keyboard and joystick functions."
+HOMEPAGE="http://freeglut.sourceforge.net/"
+SRC_URI="mirror://sourceforge/freeglut/freeglut-${PV}.tar.gz"
+SRC_DIR="freeglut-${PV}"
+
+CYGPORT_USE_UNSTABLE_API=1
+src_unpack_hook() {
+	# Mesa headers are cdecl, WGL are stdcall
+	ln -sf /usr/include/w32api/GL/*.h include/GL/
+	# match library name in deprecated opengl package
+	sed -i -e '/LIBRARY=/s/$/32/' configure.ac
+}
+
+CYGCONF_ARGS="
+	--includedir=/usr/include/w32api
+	--libdir=/usr/lib/w32api
+	--enable-shared --enable-static
+	--enable-replace-glut
+	--disable-warnings
+	--without-x
+"
+
+KEEP_LA_FILES="none"
